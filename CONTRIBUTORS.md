@@ -1,5 +1,5 @@
-IRC - I3 projet
-I3_BURDET_CHENIOUR
+# IRC - I3 tache 1
+## I3_BURDET_CHENIOUR
 
-BURDET Lucien 
-CHENIOUR Aykel
+* BURDET Lucien 
+* CHENIOUR Aykel
