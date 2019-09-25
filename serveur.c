@@ -3,7 +3,6 @@
  * Auteurs: John Samuel, ...
  */
 
-
 #include <sys/types.h> 
 #include <sys/socket.h>
 #include <sys/epoll.h>
@@ -15,26 +14,64 @@
 
 #include "serveur.h"
 
-/* renvoyer un message (*data) au client (client_socket_fd)
+/* @brief
+ * renvoyer un message (*data) au client (client_socket_fd)
+ * 
+ * @params
+ * client_socket_fd : Socket du client.
+ * data : String contenant le message du client.
+ * 
+ * @return
+ * EXIT_FAILURE en cas d'erreur.
  */
-int renvoie_message(int client_socket_fd, char *data) {
+int renvoie_message(
+  int 	client_socket_fd, 
+  char 	*data
+) {
   int data_size = write (client_socket_fd, (void *) data, strlen(data));
       
   if (data_size < 0) {
     perror("erreur ecriture");
     return(EXIT_FAILURE);
-  }
-}
+    
+  } /* Error write */
+  
+} /* renvoie_message */
 
-int renvoie_nom_client(int client_socket_fd, char *data) {
+/* @brief
+ * renvoyer un message du nom (*data) au client (client_socket_fd)
+ * 
+ * @params
+ * client_socket_fd : Socket du client.
+ * data : String contenant le message du client (nom).
+ * 
+ * @return
+ * EXIT_FAILURE en cas d'erreur.
+ */
+int renvoie_nom_client(
+  int 	client_socket_fd, 
+  char 	*data
+) {
   int data_size = write (client_socket_fd, (void *) data, strlen(data));
       
   if (data_size < 0) {
     perror("erreur ecriture");
     return(EXIT_FAILURE);
-  }
-}
+    
+  } /* Error write */
+  
+} /* renvoie_nom_client */
 
+/* @brief
+ * renvoyer le resultat du calcul (*data) au client (client_socket_fd)
+ * 
+ * @params
+ * client_socket_fd : Socket du client.
+ * data : String contenant le message du client (opérateur et nombres).
+ * 
+ * @return
+ * EXIT_FAILURE en cas d'erreur.
+ */
 int recois_numero_calcule(
   int 	client_socket_fd, 
   char 	*data
@@ -113,10 +150,23 @@ int recois_numero_calcule(
   if (data_size < 0) {
     perror("erreur ecriture");
     return(EXIT_FAILURE);
-  }
+    
+  } /* Error write */
   
 } /* recois_numero_calcule */
 
+
+/* @brief
+ * envoyer la confirmation d'enregistrement des couleurs (*data) 
+ * au client (client_socket_fd)
+ * 
+ * @params
+ * client_socket_fd : Socket du client.
+ * data : String contenant le message du client (nombre de couleurs et les couleurs).
+ * 
+ * @return
+ * EXIT_FAILURE en cas d'erreur.
+ */
 int recois_couleurs(
   int 	client_socket_fd, 
   char 	*data
@@ -176,15 +226,26 @@ int recois_couleurs(
   if (data_size < 0) {
     perror("erreur ecriture");
     return(EXIT_FAILURE);
-  }
+    
+  } /* Error write */
   
 } /* recois_couleurs */
 
-/* accepter la nouvelle connection d'un client et lire les données
+
+/* @brief
+ * accepter la nouvelle connection d'un client et lire les données
  * envoyées par le client. En suite, le serveur envoie un message
  * en retour
+ * 
+ * @params
+ * socketfd : Socket.
+ * 
+ * @return
+ * EXIT_FAILURE en cas d'erreur.
  */
-int recois_envoie_message(int socketfd) {
+int recois_envoie_message(
+  int socketfd
+) {
   struct sockaddr_in client_addr;
   char data[1024];
 
@@ -195,7 +256,8 @@ int recois_envoie_message(int socketfd) {
   if (client_socket_fd < 0 ) {
     perror("accept");
     return(EXIT_FAILURE);
-  }
+    
+  } /* Error de connexion */
 
   memset(data, 0, sizeof(data));
 
@@ -205,7 +267,8 @@ int recois_envoie_message(int socketfd) {
   if (data_size < 0) {
     perror("erreur lecture");
     return(EXIT_FAILURE);
-  }
+    
+  } /* Error read */
         
   printf ("Message recu: %s\n", data);
   char code[10];
@@ -237,7 +300,8 @@ int recois_envoie_message(int socketfd) {
 
   //fermer le socket 
   close(socketfd);
-}
+  
+} /* recois_envoie_message */
 
 int main() {
 
@@ -254,7 +318,8 @@ int main() {
   if ( socketfd < 0 ) {
     perror("Unable to open a socket");
     return -1;
-  }
+    
+  } /* Cant open the socket */
 
   int option = 1;
   setsockopt(socketfd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
@@ -269,10 +334,12 @@ int main() {
   if (bind_status < 0 ) {
     perror("bind");
     return(EXIT_FAILURE);
-  }
+    
+  } /* Error bind */
  
   listen(socketfd, 10);
   recois_envoie_message(socketfd);
 
   return 0;
-}
+  
+} /* main */
